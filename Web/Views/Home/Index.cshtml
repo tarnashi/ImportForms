@@ -1,0 +1,88 @@
+﻿@{
+    Layout = null;
+}
+
+@model IEnumerable<Core.Models.PersonViewModel>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Просмотр анкет</title>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <link href="~/Scripts/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/Home/index.js"></script>
+</head>
+
+<body>
+    <form id="inputForm">
+        <input id="inputFiles" type="file" name="fileInput" accept=".csv" multiple onchange='uploadPersons(this)'>
+    </form>
+    <button id="addButton" onclick='showAddForm()'>Add person</button>
+    <div class="addPerson">
+        <input class="add fullName" name="FullName" type="text" placeholder="FullName">
+        <input class="add birthday datepicker" name="Birthday" type="text" placeholder="Birthday">
+        <input class="add email" name="Email" type="text" placeholder="Email">
+        <input class="add phoneMobile" name="PhoneMobile" type="text" placeholder="PhoneMobile">
+        <button class="addButton" onclick='addPerson()'>Add new person</button>
+        <button class="cancelAddButton" onclick='hideAddForm()'>Cancel</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FullName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Birthday)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PhoneMobile)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id=@("tr" + item.Id)>
+                    <td>
+                        <span class="read fullName">@item.FullName</span>
+                        <input class="edit fullName" name="FullName" type="text" value=@item.FullName>
+                    </td>
+                    <td>
+                        <span class="read birthday">@((item.Birthday.HasValue) ? String.Format("{0:d}", item.Birthday.Value) : "")</span>
+                        <input class="edit birthday datepicker" name="Birthday" type="text" value=@((item.Birthday.HasValue) ? String.Format("{0:d}", item.Birthday.Value) : "")>
+                    </td>
+                    <td>
+                        <span class="read email">@item.Email</span>
+                        <input class="edit email" name="Email" type="text" value=@item.Email>
+                    </td>
+                    <td>
+                        <span class="read phoneMobile" name="PhoneMobile">@item.PhoneMobile</span>
+                        <input class="edit phoneMobile" name="PhoneMobile" type="text" value=@item.PhoneMobile>
+                    </td>
+
+                    <td>
+                        <button class="editButton" id=@("edit" + item.Id) onclick='editPerson(@item.Id)'>Edit</button>
+                        <button class="deleteButton" id=@("delete" + item.Id) onclick='deletePerson(@item.Id)'>Delete</button>
+                        <button class="updateButton" id=@("update" + item.Id) onclick='updatePerson(@item.Id)'>Update</button>
+                        <button class="cancelButton" id=@("cancel" + item.Id) onclick='cancelUpdatePerson(@item.Id)'>Cancel</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <br />
+    @Html.ActionLink("Export .csv", "DownloadPersonsCsv", "PersonsApi")
+
+</body>
+</html>
